@@ -108,37 +108,42 @@ function New-PSClassGraph
 
     # get all classes, and build graph
     (Get-PSClassModels -RootPath $RootPath) | ForEach-Object {
-        $graph.Classes[$_.Namespace] = $_
+        $graph.Classes[$_.Name] = $_
     }
 
     # regex for using
-    $regex = '^\s*#\s*using\s+(class|enum)\s+(?<namespace>.+)\s*$'
+    $regex = '\[(?<name>\w+)\]'
 
     # now, get all class dependencies
     foreach ($class in $graph.Classes.Values) {
         # get file content
         $content = $class.Content()
 
-        # parse for the "using class" comment
-        $usings = @($content -imatch $regex)
+        # get all classes being used
+        $classes = @($content -imatch $regex)
 
         # if there are no dependencies, move along
-        if ($usings.Length -eq 0) {
+        if ($classes.Length -eq 0) {
             continue
         }
 
-        # loop through each using, adding dependencies and used by
-        foreach ($using in $usings) {
-            $using -imatch $regex | Out-Null
-            $namespace = $Matches['namespace']
+        # loop through each class, adding dependencies and used by
+        foreach ($dep in $classes) {
+            $dep -imatch $regex | Out-Null
+            $className = $Matches['name']
 
-            # ensure the class namespace exists
-            if (!$graph.Classes.ContainsKey($namespace)) {
-                throw "The namespace '$($namespace)' does not exist: $($class.Path)"
+            # skip if class isn't custom
+            if (!$graph.Classes.ContainsKey($className)) {
+                continue
+            }
+
+            # skip if it is a self reference
+            if ($className -ieq $class.Name) {
+                continue
             }
 
             # add dependency
-            $graph.Classes[$class.Namespace].Link($graph.Classes[$namespace])
+            $graph.Classes[$class.Name].Link($graph.Classes[$className])
         }
     }
 

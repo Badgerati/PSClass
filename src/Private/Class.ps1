@@ -12,6 +12,7 @@ function New-PSClassModel
 
     $class = (New-Object -TypeName PSObject -Property @{
         Path = $ClassPath
+        Name = [System.IO.Path]::GetFileNameWithoutExtension($ClassPath)
         Namespace = (Get-PSClassNamespace -ClassPath $ClassPath -RootPath $RootPath)
         Added = $false
         DependentOn = @()

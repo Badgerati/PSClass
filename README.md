@@ -4,40 +4,25 @@ This is a PowerShell module to help determine class dependencies, and also to de
 
 ## Usage
 
-All classes/enums need to be within a `/Classes` directory. Then in each of your classes, have at the top a reference to the other classes/enums it depends on:
+All classes/enums need to be within a `/Classes` directory, and references to custom classes referenced as `[ClassA]`. Class names should also match the name of the PowerShell file - so a `ClassA` *must* be within a `ClassA.ps1` file.
+
+For example, if you have some class `ClassA` and some other class `ClassB`, the PSClass will see `[ClassB]::Method()` and mark that it should be imported before `ClassA` automatically:
 
 ```powershell
-# using class ClassA
-# using enum EnumZ
-```
-
-For example, if you have some class `ClassA` and some other class `ClassB`, if `ClassA` depends on `ClassB` then at the top of `ClassA`:
-
-```powershell
-# using class ClassB
-
 class ClassA
 {
-    # normal logic
+    static [void] SomeMethod()
+    {
+        [ClassB]::Method()
+    }
 }
 ```
 
-PSClass will use the `# using class` and `# using enum` lines to determine the order that classes/enums are required to be imported - as well as detecting cyclic dependencies.
+Here, PSClass will know that `ClassB` needs to be imported before `ClassA`.
 
-### Sub-Directories
+PSClass will see any `[...]` lines and use them to determine the order that classes/enums are required to be imported - as well as detecting cyclic dependencies.
 
-If you have your classes/enums in sub-directories (within `/Classes` directory), then you'll need to reference dependencies using a namespace system.
-
-For example, if again have `ClassA` depending on `ClassB` but this time `ClassB` is within the directory `Other`, then your using statement would be:
-
-```powershell
-# using class Other.ClassB
-
-class ClassA
-{
-    # normal logic
-}
-```
+> Classes/enums can be within sub-directories within the `/Classes` directory.
 
 ## Functions
 

@@ -32,7 +32,7 @@ PSClass will see any `[...]` lines and use them to determine the order that clas
 Get-PSClassOrder [-Path <string>]
 ```
 
-When run, this function will look for the `/Classes` folder at the `-Path` specified (default is current).
+When run, this function will look for the `/Classes` folder at the `-Path` specified (default is the current path).
 
 It will then return an array of the class/enum paths in the precise order that they should be imported:
 
@@ -46,7 +46,7 @@ Get-PSClassOrder | ForEach-Object { . $_ }
 Show-PSClassgraph [-Path <string>] [-Namespace <string>]
 ```
 
-Will return the full dependency graph of the classes/enums, or just the dependencies of the namespace specified.
+Will return the full dependency graph of the classes/enums, or just the dependencies of the namespace specified. The namespace is the path to a class (with no extension), and the slashes are replaced for dots - such as `Tools.Helpers` for a class called `Helpers` at `/Classes/Tools/Helpers.ps1`.
 
 ### Test-PSClassCyclic
 
@@ -54,4 +54,4 @@ Will return the full dependency graph of the classes/enums, or just the dependen
 Test-PSClassCyclic [-Path <string>] [-Namespace <string>]
 ```
 
-Will test for cyclic dependencies on a classes/enums.
+Will test for cyclic dependencies on a classes/enums. The namespace is the path to a class (with no extension), and the slashes are replaced for dots - such as `Tools.Helpers` for a class called `Helpers` at `/Classes/Tools/Helpers.ps1`.

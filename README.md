@@ -2,6 +2,14 @@
 
 This is a PowerShell module to help determine class dependencies, and also to determine the order that you need to import classes into your module.
 
+## Install
+
+You can install PSClass from the PowerShell Gallery
+
+```powershell
+Install-Module PSClass
+```
+
 ## Usage
 
 All classes/enums need to be within a `/Classes` directory, and references to custom classes referenced as `[ClassA]`. Class names should also match the name of the PowerShell file - so a `ClassA` *must* be within a `ClassA.ps1` file.
